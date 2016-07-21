@@ -48,13 +48,13 @@ module Capacity
       end
       if !average_stats.empty?
         Capacity::Logger.log(:info, "Processing #{options[:runs]} runs")
-        results_hash = Hash.new(0)
+        result = Hash.new(0)
         average_stats.each do |current_result|
           current_result.each do |k, v|
-            results_hash[k] += current_result[k]
+            result[k] += current_result[k]
           end
         end
-        results_hash.each { |k, v| results_hash[k] = v / options[:runs] }
+        result.each { |k, v| result[k] = v / options[:runs] }
       else
         Capacity::Logger.log(:info, 'Processing single run')
       end
