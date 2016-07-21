@@ -12,7 +12,7 @@ module Capacity
     def self.ab_command(options, url)
       Capacity::Logger.log(:info, "Calling ab on: #{url}")
       "ab -c #{options[:concurrency]} -n #{options[:num_requests]} " \
-        "-k -H 'Accept-Encoding: gzip' #{url}"
+        "-k -l -H 'Accept-Encoding: gzip' #{url}"
     end
 
     def self.ab(options = nil)
@@ -26,13 +26,9 @@ module Capacity
         Capacity::Logger.log(:info, cmd)
 
         run_multiple(run_options, url) do
-          Open3.popen3(cmd) do |_stdin, stdout, stderr|
-            if stderr.readlines.length > 0
-              raise_formatted_error(cmd, stderr.readlines)
-            end
-            formatted_output = stdout.readlines.reduce { |line, memo| memo += line }
-            Capacity::Result.new(formatted_output, run_options)
-          end
+          stdout, stderr, exit_status = Open3.capture3(cmd)
+          raise_formatted_error(cmd, stderr) if !exit_status.success?
+          Capacity::Result.new(stdout, run_options)
         end
       end
     end
@@ -70,8 +66,7 @@ module Capacity
     def self.raise_formatted_error(cmd, err_lines)
       cmd = cmd.red
       err = 'Command failed'.red
-      err_s = err_lines.reduce { |line, memo| memo += line }
-      err_s = err_s.red if err_s
+      err_lines = err_s.red if err_s
       raise "#{err}\nCommand: #{cmd}\n#{err_s}"
     end
   end
