@@ -67,7 +67,7 @@ module Capacity
       cmd = cmd.red
       err = 'Command failed'.red
       err_lines = err_lines.red
-      raise "#{err}\nCommand: #{cmd}\n#{err_s}"
+      raise "#{err}\nCommand: #{cmd}\n#{err_lines}"
     end
   end
 end

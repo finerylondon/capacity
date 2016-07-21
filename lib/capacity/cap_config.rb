@@ -1,11 +1,13 @@
 module Capacity
   module CapConfig
+    require_relative '../capacity'
+    require 'yaml'
     class << self
       attr_accessor :ab_options, :config
     end
 
     def self.load
-      config_path = File.join('./config/config.yml')
+      config_path = File.join(Capacity.root, 'lib/config/config.yml')
       YAML.load_file(config_path)
     end
 
