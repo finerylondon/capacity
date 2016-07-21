@@ -1,0 +1,4 @@
+urls: 'http://staging.finerylondon.com/'
+runs: 1
+concurrency: 1
+num_requests: 100

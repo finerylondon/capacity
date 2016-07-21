@@ -1,35 +1,30 @@
 module Capacity
-  module Config
+  module CapConfig
     class << self
-      attr_accessor :page_sets, :best_concurrency_options, :ab_options
+      attr_accessor :ab_options, :config
     end
 
-    @page_sets = {
-      localhost: [
-        {
-          name: 'localhost',
-          url: 'http://localhost:3000/',
-          max_avg_response_time: 500
-        }
-      ]
-    }
+    def self.load
+      config_path = File.join('./config/config.yml')
+      YAML.load_file(config_path)
+    end
 
-    @best_concurrency_options = {
-      max_degradation_percent: 0.5,
-      max_latency: 1000.0,
-      num_baseline_runs: 5,
-      num_concurrency_runs: 3
-    }
+    def self.symbolize_keys(hash)
+      {}.tap do |result|
+        hash.each_key { |key| result[key.to_sym] = hash[key] }
+      end
+    end
+
+    @config = self.symbolize_keys(CapConfig.load)
 
     @ab_options = {
-      concurrency: 1,
-      num_requests: 100
+      urls: @config[:urls],
+      runs: @config[:runs],
+      concurrency: @config[:concurrency],
+      num_requests: @config[:num_requests]
     }
 
-    def self.page_sets=(new_page_sets)
-      @page_sets = new_page_sets
-      require 'rake'
-      load File.join(Capacity.root, 'lib/capacity/tasks/generated.rake')
-    end
+    puts @ab_options
+
   end
 end
