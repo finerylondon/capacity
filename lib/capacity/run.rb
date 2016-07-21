@@ -18,6 +18,7 @@ module Capacity
     def self.ab(options = nil)
       run_options =
         options ? setup_options(options) : Capacity::CapConfig.ab_options
+      final_results = []
 
       run_options[:urls] = [run_options[:urls]].flatten
 
@@ -25,19 +26,18 @@ module Capacity
         cmd = ab_command(run_options, url)
         Capacity::Logger.log(:info, cmd)
 
-        run_multiple(run_options, url) do
+        run_multiple(run_options, url, final_results) do
           stdout, stderr, exit_status = Open3.capture3(cmd)
           raise_formatted_error(cmd, stderr) if !exit_status.success?
-          Capacity::Result.new(stdout, run_options)
+          Capacity::Result.log(stdout)
         end
       end
+      final_results
     end
 
-    def self.run_multiple(options, url, &block)
+    def self.run_multiple(options, url, final_results, &block)
       average_stats = []
-      results_hash = { average: 0,
-                       queries_per_second: 0,
-                       failed_requests: 0 }
+
       result = nil
       if options[:runs] == 1
         result = block.call
@@ -48,25 +48,25 @@ module Capacity
       end
       if !average_stats.empty?
         Capacity::Logger.log(:info, "Processing #{options[:runs]} runs")
+        results_hash = Hash.new(0)
         average_stats.each do |current_result|
-          results_hash[:average] += current_result.avg_response_time
-          results_hash[:queries_per_second] += current_result.queries_per_second
-          results_hash[:failed_requests] += current_result.failed_requests
+          current_result.each do |k, v|
+            results_hash[k] += current_result[k]
+          end
         end
         results_hash.each { |k, v| results_hash[k] = v / options[:runs] }
       else
         Capacity::Logger.log(:info, 'Processing single run')
-        results_hash[:average] += result.avg_response_time
-        results_hash[:queries_per_second] += result.queries_per_second
-        results_hash[:failed_requests] += result.failed_requests
       end
-      Capacity::Logger.log(:result, results_hash.merge!(url: url).to_s)
+      result[:url] = url
+      final_results << result
+      Capacity::Logger.log(:result, result.to_s)
     end
 
     def self.raise_formatted_error(cmd, err_lines)
       cmd = cmd.red
       err = 'Command failed'.red
-      err_lines = err_s.red if err_s
+      err_lines = err_lines.red
       raise "#{err}\nCommand: #{cmd}\n#{err_s}"
     end
   end

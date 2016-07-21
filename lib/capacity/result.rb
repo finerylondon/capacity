@@ -1,35 +1,51 @@
 module Capacity
   class Result
-    attr_accessor :raw, :options
 
-    def initialize(raw_output, options)
-      @raw = raw_output
-      @options = options
+    def self.avg_response_time
+      @raw.match(/Time per request:\s*([\d\.]+)\s\[ms\]\s\(mean\)/)[1].to_f
     end
 
-    def command
-      Capacity::Run.ab_command(@options)
+    def self.queries_per_second
+      @raw.match(/Requests per second:\s*([\d\.]+)\s\[#\/sec\]\s\(mean\)/)[1].to_f
     end
 
-    def avg_response_time
-      raw.match(/Time per request:\s*([\d\.]+)\s\[ms\]\s\(mean\)/)[1].to_f
+    def self.transfer_rate
+      @raw.match(/Transfer rate:\s*([\d\.]+)\s\[Kbytes\/sec\]/)[1].to_f
     end
 
-    def queries_per_second
-      raw.match(/Requests per second:\s*([\d\.]+)\s\[#\/sec\]\s\(mean\)/)[1].to_f
+    def self.failed_requests
+      @raw.match(/Failed requests:\s*([\d\.]+)/)[1].to_i
     end
 
-    def failed_requests
-      raw.match(/Failed requests:\s*([\d\.]+)/)[1].to_i
+    def self.non_2xx
+      @raw.match(/Non-2xx responses:\s*([\d\.]+)/)[1].to_i
     end
 
-    def log
-      Capacity::Logger.log(:ab_result, command.to_s)
-      Capacity::Logger.log(:ab_result,
-                           "Average Response Time: #{avg_response_time}")
-      Capacity::Logger.log(:ab_result,
-                           "Queries per Second: #{queries_per_second}")
-      Capacity::Logger.log(:ab_result, "Failed requests: #{failed_requests}")
+    def self.keep_alive
+      @raw.match(/Keep-Alive requests:\s*([\d\.]+)/)[1].to_i
+    end
+
+    def self.percent_served_within(percent)
+      @raw.match(/#{percent}\s*([\d]+)/)[1].to_i
+    end
+
+    def self.log(raw)
+      @raw = raw
+      queries = %w(avg_response_time queries_per_second transfer_rate
+                   failed_requests non_2xx keep_alive)
+      results_hash =
+        {}.tap do |hash|
+          queries.each do |name|
+            hash[name.to_sym] = Capacity::Result.send(name)
+          end
+        end
+
+      percentages = [50, 66, 75, 80, 90, 95, 98, 99, 100]
+      percentages.each do |int|
+        results_hash["percent_#{int}".to_sym] = percent_served_within("#{int}%")
+      end
+      results_hash[:longest_request] = results_hash[:percent_100]
+      Capacity::CapConfig.symbolize_keys(results_hash)
     end
   end
 end
