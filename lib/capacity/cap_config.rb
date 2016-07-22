@@ -1,13 +1,13 @@
+require 'yaml'
+
 module Capacity
   module CapConfig
-    require_relative '../capacity'
-    require 'yaml'
     class << self
       attr_accessor :ab_options, :config
     end
 
     def self.load
-      config_path = File.join(Capacity.root, 'lib/config/config.yml')
+      config_path = File.join(File.dirname(File.dirname(__FILE__)), '/config/config.yml')
       YAML.load_file(config_path)
     end
 
@@ -17,7 +17,7 @@ module Capacity
       end
     end
 
-    @config = self.symbolize_keys(CapConfig.load)
+    @config = symbolize_keys(CapConfig.load)
 
     @ab_options = {
       urls: @config[:urls],
@@ -25,8 +25,5 @@ module Capacity
       concurrency: @config[:concurrency],
       num_requests: @config[:num_requests]
     }
-
-    puts @ab_options
-
   end
 end
