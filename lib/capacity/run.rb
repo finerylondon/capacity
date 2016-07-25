@@ -50,9 +50,7 @@ module Capacity
         Capacity::Logger.log(:info, "Processing #{options[:runs]} runs")
         result = Hash.new(0)
         average_stats.each do |current_result|
-          current_result.each do |k, v|
-            result[k] += current_result[k]
-          end
+          current_result.each { |k, _v| result[k] += current_result[k] }
         end
         result.each { |k, v| result[k] = v / options[:runs] }
       else

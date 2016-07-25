@@ -63,6 +63,7 @@ namespace :capacity do
   end
 
   def create_config
+    Capacity::Logger.log(:info, 'Config file note found... creating')
     File.open(File.join(Capacity.root, '/lib/config/config.yml'), 'w+') do |f|
       f.puts "urls: 'http://staging.finerylondon.com/'"
       f.puts 'runs: 1'
