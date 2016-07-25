@@ -1,9 +1,7 @@
 require 'bundler/gem_tasks'
 
-Dir[File.join(File.dirname(__FILE__), "**/*.rb")]
+Dir[File.join(File.dirname(__FILE__), '**/*.rb')]
   .each { |f| require f }
 
-Dir[File.join(File.dirname(__FILE__), "lib/**/*.rake")].each  { |rake| load(rake) }
-
-#task :run
-#task configure: [:urls, :runs, :conc, :reqs]
+Dir[File.join(File.dirname(__FILE__), 'lib/**/*.rake')]
+  .each { |rake| load(rake) }

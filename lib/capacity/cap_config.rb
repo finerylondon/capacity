@@ -8,7 +8,15 @@ module Capacity
 
     def self.load
       config_path = File.join(File.dirname(File.dirname(__FILE__)), '/config/config.yml')
-      YAML.load_file(config_path)
+      config_file = YAML.load_file(config_path)
+      @config = symbolize_keys(config_file)
+
+      @ab_options = {
+        urls: @config[:urls],
+        runs: @config[:runs],
+        concurrency: @config[:concurrency],
+        num_requests: @config[:num_requests]
+      }
     end
 
     def self.symbolize_keys(hash)
@@ -17,13 +25,6 @@ module Capacity
       end
     end
 
-    @config = symbolize_keys(CapConfig.load)
-
-    @ab_options = {
-      urls: @config[:urls],
-      runs: @config[:runs],
-      concurrency: @config[:concurrency],
-      num_requests: @config[:num_requests]
-    }
+    CapConfig.load
   end
 end

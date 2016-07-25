@@ -13,13 +13,8 @@ Gem::Specification.new do |s|
 Load testing using Apache Benchmark
 DESC
 
-  # s.rubyforge_project = "abcrunch"
-
   s.files         = `git ls-files`.split("\n")
-  # s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  # s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-  # s.license       = "MIT"
 
   s.add_runtime_dependency "colorize"
 end
