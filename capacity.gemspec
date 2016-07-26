@@ -9,8 +9,9 @@ Gem::Specification.new do |s|
   s.email       = ["steve@finerylondon.com"]
   s.homepage    = "https://github.com/finerylondon/capacity"
   s.summary     = "Load testing using Apache Benchmark"
+  s.platform    =  Gem::Platform::RUBY
   s.description = <<-DESC
-Load testing using Apache Benchmark
+Load testing using Apache Benchmark - more to come
 DESC
 
   s.files         = `git ls-files`.split("\n")
