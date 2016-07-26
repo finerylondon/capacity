@@ -1,4 +1,4 @@
 urls: ["http://staging.finerylondon.com/", "http://google.co.uk/"]
-runs: 1
-concurrency: 10
+runs: 2
+concurrency: 5
 num_requests: 100

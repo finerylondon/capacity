@@ -4,7 +4,6 @@ namespace :capacity do
     opts = options_hash
     if opts.values.compact.size > 0
       Capacity::CapConfig.update_config(opts)
-      Capacity::CapConfig.load
     end
     Capacity::Run.ab
   end

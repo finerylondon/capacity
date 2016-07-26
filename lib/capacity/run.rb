@@ -38,7 +38,6 @@ module Capacity
     def self.run_multiple(options, url, final_results, &block)
       average_stats = []
 
-      result = nil
       if options[:runs] == 1
         result = block.call
       else

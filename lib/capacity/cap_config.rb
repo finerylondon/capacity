@@ -51,7 +51,7 @@ module Capacity
       new_file = build_file(original_file, opts)
 
       write_config(file_path, new_file) if new_file.size
-      Capacity::CapConfig.load
+      load
     end
 
     def self.build_file(original_file, opts)
