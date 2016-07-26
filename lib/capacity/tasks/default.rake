@@ -3,7 +3,7 @@ namespace :capacity do
   task :run do
     opts = options_hash
     if opts.values.compact.size > 0
-      update_options(opts)
+      Capacity::CapConfig.update_config(opts)
       Capacity::CapConfig.load
     end
     Capacity::Run.ab
