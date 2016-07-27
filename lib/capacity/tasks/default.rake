@@ -29,5 +29,4 @@ namespace :capacity do
     { urls: ENV['urls'], runs: ENV['runs'],
       conc: ENV['conc'], reqs: ENV['reqs'] }
   end
-
 end

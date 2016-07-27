@@ -28,7 +28,7 @@ module Capacity
 
         run_multiple(run_options, url, final_results) do
           stdout, stderr, exit_status = Open3.capture3(cmd)
-          raise_formatted_error(cmd, stderr) if !exit_status.success?
+          raise_formatted_error(cmd, stderr) unless exit_status.success?
           Capacity::Result.log(stdout)
         end
       end

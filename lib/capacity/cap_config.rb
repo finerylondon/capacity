@@ -26,7 +26,8 @@ module Capacity
     end
 
     def self.load_or_generate_config
-      config_path = File.join(File.dirname(File.dirname(__FILE__)), '/config/config.yml')
+      config_path = File.join(File.dirname(File.dirname(__FILE__)),
+                              '/config/config.yml')
       begin
         YAML.load_file(config_path)
       rescue Errno::ENOENT
@@ -36,7 +37,8 @@ module Capacity
     end
 
     def self.create_default_config_file
-      File.open(File.join(File.join(File.dirname(File.dirname(__FILE__)), '/config/config.yml')), 'w+') do |f|
+      File.open(File.join(File.join(File.dirname(File.dirname(__FILE__)),
+                                    '/config/config.yml')), 'w+') do |f|
         f.puts "urls: 'http://staging.finerylondon.com/'"
         f.puts 'runs: 1'
         f.puts 'concurrency: 10'
@@ -45,7 +47,8 @@ module Capacity
     end
 
     def self.update_config(opts)
-      file_path = File.join(File.dirname(File.dirname(__FILE__)), '/config/config.yml')
+      file_path = File.join(File.dirname(File.dirname(__FILE__)),
+                            '/config/config.yml')
       original_file = IO.readlines(file_path)
 
       new_file = build_file(original_file, opts)
