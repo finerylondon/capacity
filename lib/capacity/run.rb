@@ -4,9 +4,9 @@ require 'pp'
 module Capacity
   class Run
     def self.setup_options(new_options)
-      options = Capacity::CapConfig.ab_options
-      new_options.each { |k, v| options[k] = v }
-      options
+      file_path = File.join(File.dirname(File.dirname(__FILE__)),
+                            '/config/config.yml')
+      Capacity::CapConfig.update_config(new_options)
     end
 
     def self.ab_command(options, url)
@@ -56,6 +56,9 @@ module Capacity
         Capacity::Logger.log(:info, 'Processing single run')
       end
       result[:url] = url
+      result[:runs] = options[:runs]
+      result[:concurrency] = options[:concurrency]
+      result[:num_requests] = options[:num_requests]
       final_results << result
       Capacity::Logger.log(:result, result.to_s)
     end

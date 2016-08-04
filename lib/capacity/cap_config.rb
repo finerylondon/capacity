@@ -49,15 +49,15 @@ module Capacity
     def self.update_config(opts)
       file_path = File.join(File.dirname(File.dirname(__FILE__)),
                             '/config/config.yml')
-      original_file = IO.readlines(file_path)
-
-      new_file = build_file(original_file, opts)
+      new_file = build_file(file_path, opts)
 
       write_config(file_path, new_file) if new_file.size
       load
     end
 
-    def self.build_file(original_file, opts)
+    def self.build_file(file_path, opts)
+      original_file = IO.readlines(file_path)
+
       ''.tap do |str|
         original_file.each do |line|
           updated_line =
