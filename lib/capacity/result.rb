@@ -50,7 +50,7 @@ module Capacity
 
     def self.safe_integer(reg_ex)
       content = @raw.match(reg_ex)
-      content[1].to_i if content.size >= 2
+      content[1].to_i if content && content.size >= 2
     end
   end
 end
