@@ -2,31 +2,31 @@ module Capacity
   class Result
 
     def self.avg_response_time
-      @raw.match(/Time per request:\s*([\d\.]+)\s\[ms\]\s\(mean\)/)[1].to_f
+      safe_integer(/Time per request:\s*([\d\.]+)\s\[ms\]\s\(mean\)/)
     end
 
     def self.queries_per_second
-      @raw.match(/Requests per second:\s*([\d\.]+)\s\[#\/sec\]\s\(mean\)/)[1].to_f
+      safe_integer(/Requests per second:\s*([\d\.]+)\s\[#\/sec\]\s\(mean\)/)
     end
 
     def self.transfer_rate
-      @raw.match(/Transfer rate:\s*([\d\.]+)\s\[Kbytes\/sec\]/)[1].to_f
+      safe_integer(/Transfer rate:\s*([\d\.]+)\s\[Kbytes\/sec\]/)
     end
 
     def self.failed_requests
-      @raw.match(/Failed requests:\s*([\d\.]+)/)[1].to_i
+      safe_integer(/Failed requests:\s*([\d\.]+)/)
     end
 
     def self.non_2xx
-      @raw.match(/Non-2xx responses:\s*([\d\.]+)/)[1].to_i
+      safe_integer(/Non-2xx responses:\s*([\d\.]+)/)
     end
 
     def self.keep_alive
-      @raw.match(/Keep-Alive requests:\s*([\d\.]+)/)[1].to_i
+      safe_integer(/Keep-Alive requests:\s*([\d\.]+)/)
     end
 
     def self.percent_served_within(percent)
-      @raw.match(/#{percent}\s*([\d]+)/)[1].to_i
+      safe_integer(/#{percent}\s*([\d]+)/)
     end
 
     def self.log(raw)
@@ -46,6 +46,11 @@ module Capacity
       end
       results_hash[:longest_request] = results_hash[:percent_100]
       Capacity::CapConfig.symbolize_keys(results_hash)
+    end
+
+    def self.safe_integer(reg_ex)
+      content = @raw.match(reg_ex)
+      content[1].to_i if content.size >= 2
     end
   end
 end

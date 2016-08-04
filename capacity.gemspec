@@ -18,5 +18,5 @@ DESC
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency "colorize"
-  s.add_development_dependency %w(rake yaml)
+  s.add_development_dependency 'rake'
 end
